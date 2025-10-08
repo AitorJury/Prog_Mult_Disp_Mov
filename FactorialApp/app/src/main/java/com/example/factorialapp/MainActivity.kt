@@ -26,17 +26,25 @@ class MainActivity : AppCompatActivity() {
 
         bFact.setOnClickListener {
             val number = wText.text.toString().toIntOrNull()
-            factFun(number)
+            if (number == null) {
+                aText.text = "Introduzca un atributo válido..."
+            } else {
+                factFun(number, aText)
+            }
         }
     }
 
-    private fun factFun(number : Int?) {
-        val message = when {
-            number >= 0 -> for (val cont = number, cont > 0, cont--) {
-
+    private fun factFun(number : Int, aText : TextView) {
+        if (number < 0) {
+            aText.text = "Introduzca un valor positivo..."
+        } else if (number == 0) {
+            aText.text = "El factorial de $number es 1"
+        } else {
+            var resul = 1
+            for (i in 1..number) {
+                resul *= i
             }
-            else -> "Introduzca un valor numérico positivo..."
+            aText.text = "El factorial de $number es $resul"
         }
-
     }
 }
