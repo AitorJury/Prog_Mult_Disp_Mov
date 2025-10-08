@@ -8,8 +8,11 @@
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="730dp"
+        android:layout_width="409dp"
+        android:layout_height="729dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="24dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -17,22 +20,20 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <EditText
-            android:id="@+id/wText"
+            android:id="@+id/writeText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:textSize="17dp"
-            android:inputType="text"
-            android:hint="Número..."/>
+            android:inputType="text" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/buttonFact"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Comprobar" />
+            android:text="Factorizar" />
 
         <TextView
-            android:id="@+id/rText"
+            android:id="@+id/answerText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
