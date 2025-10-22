@@ -1,5 +1,18 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" android:id="@+id/main" android:layout_width="match_parent" android:layout_height="match_parent" tools:context=".MainActivity">
-    <View android:id="@+id/cuadrado" android:layout_width="100dp" android:layout_height="100dp" android:layout_centerInParent="true" android:background="#FF0000"/>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <View
+        android:id="@+id/cuadrado"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerInParent="true"
+        android:background="#FF0000"/>
 
     <Button
         android:id="@+id/buttonArriba"
@@ -9,16 +22,61 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:text="Arriba" />
-    <Button android:id="@+id/buttonAbajo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@id/buttonArriba" android:layout_centerHorizontal="true" android:layout_marginTop="10dp" android:text="Abajo"/>
-    <Button android:id="@+id/buttonIzquierda" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@id/cuadrado" android:layout_marginTop="50dp" android:layout_marginEnd="10dp" android:layout_toStartOf="@id/buttonArriba" android:text="Izquierda"/>
-    <Button android:id="@+id/buttonDerecha" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@id/cuadrado" android:layout_marginStart="10dp" android:layout_marginTop="50dp" android:layout_toEndOf="@id/buttonArriba" android:text="Derecha"/>
-    <Button android:id="@+id/buttonCambiarTamanio" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@id/buttonAbajo" android:layout_centerHorizontal="true" android:layout_marginTop="30dp" android:text="Cambiar Tamaño"/>
+
+    <Button
+        android:id="@+id/buttonAbajo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonArriba"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="Abajo"/>
+
+    <Button
+        android:id="@+id/buttonIzquierda"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cuadrado"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="10dp"
+        android:layout_toStartOf="@id/buttonArriba"
+        android:text="Izquierda"/>
+
+    <Button
+        android:id="@+id/buttonDerecha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cuadrado"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="50dp"
+        android:layout_toEndOf="@id/buttonArriba"
+        android:text="Derecha"/>
+
+    <Button
+        android:id="@+id/buttonAgrandar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cuadrado"
+        android:layout_marginTop="150dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginEnd="0dp"
+        android:text="Agrandar" />
+
+    <Button
+        android:id="@+id/buttonDisminuir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cuadrado"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="150dp"
+        android:layout_toEndOf="@id/buttonAgrandar"
+        android:text="Disminuir" />
 
     <Button
         android:id="@+id/buttonCambiarColor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/buttonCambiarTamanio"
+        android:layout_below="@id/buttonAgrandar"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:text="Cambiar color" />
