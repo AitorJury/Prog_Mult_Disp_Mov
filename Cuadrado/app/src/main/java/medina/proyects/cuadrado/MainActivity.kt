@@ -1,100 +1,154 @@
-package medina.proyects.cuadrado
+package com.example.boxv2
 
+import android.content.Context
+import model.Cuadrado
+import android.graphics.Color
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import android.graphics.Color
-
-import androidx.core.view.WindowInsetsCompat
-import model.Cuadrado
+import model.CuadradoBorde
 import kotlin.random.Random
-import kotlin.random.nextInt
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        //enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-        //identificacion del cuadrado vista
-        val cuadradoView : View = findViewById(R.id.cuadrado)
-        cuadradoView.post {
-            val inicialAncho = cuadradoView.width
-            val inicialAlto = cuadradoView.height
-            val inicialX = cuadradoView.x
-            val inicialY = cuadradoView.y
-            //asociar a la vista con el objeto cuadrado
-            //ContextCompat es una clase para acceder a recursos
-            val cuadrado : Cuadrado = Cuadrado(ContextCompat.getColor(this, R.color.red), inicialAncho, inicialAlto).apply {
-                x = inicialX.toInt()
-                y  = inicialY.toInt()
+        //Creacion de todas las variable por id's
+        val btnLeft = findViewById<Button>(R.id.btnLeft)
+        val btnUp = findViewById<Button>(R.id.btnUp)
+        val btnRight = findViewById<Button>(R.id.btnRight)
+        val btnDown = findViewById<Button>(R.id.btnDown)
+        val btnSetColor = findViewById<Button>(R.id.btnSetColor)
+        val btnPlusSize = findViewById<Button>(R.id.btnPlus)
+        val btnMinusSize = findViewById<Button>(R.id.btnMinus)
+        val btnBorderColor = findViewById<Button>(R.id.btnBorderColor)
 
+
+        val vSquare = findViewById<View>(R.id.vBox)
+
+        /*Usamos el metodo post() para que se ejecute este bloque de codigo en el hilo de la interfaz
+        de usuario justo despues que se cargue la vista, se construya y se mida
+        */
+
+        vSquare.post {
+            val initX = vSquare.x.toInt()
+            val initY = vSquare.y.toInt()
+            val alto = vSquare.height
+            val ancho = vSquare.width
+
+            /*
+            val cuadrado: Cuadrado =
+                Cuadrado(ContextCompat.getColor(this, R.color.red), ancho, alto)
+                    .apply {
+                        //Reasignamos los valores de x e y
+                        //Asignamos los valores de la vista initY al objeto cuadrado y
+                        x = initX
+                        y = initY
+                    }
+            */
+             //cuadradoBorde se usa para poder cambiar el color del borde usando herencia de la clase Cuadrado
+            val cuadrado: CuadradoBorde =
+                CuadradoBorde(
+                    ContextCompat.getColor(this, R.color.red), ancho, alto,
+                    ContextCompat.getColor(this, R.color.black)
+                ).apply {
+                    //Reasignamos los valores de x e y
+                    //Asignamos los valores de la vista initY al objeto cuadrado y
+                    x = initX
+                    y = initY
+                }
+
+            btnBorderColor.setOnClickListener {
+                cuadrado.cambiarColorBorde(randomColor())
+                updateView(cuadrado, vSquare)
             }
 
-
-            //identifiacacion de botones
-
-            val botonArriba : Button = findViewById<Button>(R.id.buttonArriba)
-            val botonAbajo : Button = findViewById<Button>(R.id.buttonAbajo)
-            val botonIzquierda : Button = findViewById<Button>(R.id.buttonIzquierda)
-            val botonDerecha : Button = findViewById<Button>(R.id.buttonDerecha)
-            val botonCambiarColor : Button = findViewById<Button>(R.id.buttonCambiarColor)
-            val botonAgrandar : Button = findViewById<Button>(R.id.buttonAgrandar)
-            val botonDisminuir : Button = findViewById<Button>(R.id.buttonDisminuir)
-
-            //ponemos botones a la escucha
-            botonArriba.setOnClickListener {
+            btnUp.setOnClickListener {
+                resetCoordenas(cuadrado, vSquare)
                 cuadrado.moverArriba()
-                actualizarVista(cuadrado, cuadradoView)
+                updateView(cuadrado, vSquare)
             }
-            botonAbajo.setOnClickListener {
+            btnDown.setOnClickListener {
+                resetCoordenas(cuadrado, vSquare)
                 cuadrado.moverAbajo()
-                actualizarVista(cuadrado, cuadradoView)
+                updateView(cuadrado, vSquare)
             }
-            botonDerecha.setOnClickListener {
-                cuadrado.moverDerecha()
-                actualizarVista(cuadrado, cuadradoView)
+            btnRight.setOnClickListener {
+                resetCoordenas(cuadrado, vSquare)
+                cuadrado.moverDrch()
+                updateView(cuadrado, vSquare)
             }
-            botonIzquierda.setOnClickListener {
-                cuadrado.moverIzquierda()
-                actualizarVista(cuadrado, cuadradoView)
+            btnLeft.setOnClickListener {
+                resetCoordenas(cuadrado, vSquare)
+                cuadrado.moverIzq()
+                updateView(cuadrado, vSquare)
             }
-            botonAgrandar.setOnClickListener {
-                cuadrado.ampliar()
-                actualizarVista(cuadrado, cuadradoView)
+            btnPlusSize.setOnClickListener {
+                resetCoordenas(cuadrado, vSquare)
+                cuadrado.aumentarTamanio()
+                updateView(cuadrado, vSquare)
             }
-            botonDisminuir.setOnClickListener {
-                cuadrado.disminuir()
-                actualizarVista(cuadrado, cuadradoView)
+            btnMinusSize.setOnClickListener {
+                resetCoordenas(cuadrado, vSquare)
+                cuadrado.disminuirTamanio()
+                updateView(cuadrado, vSquare)
             }
-            botonCambiarColor.setOnClickListener {
-                cuadrado.color = generarColorAleatorio()
-                actualizarVista(cuadrado, cuadradoView)
+            btnSetColor.setOnClickListener {
+                cuadrado.color = randomColor()
+                updateView(cuadrado, vSquare)
             }
         }
     }
 
-    fun generarColorAleatorio() : Int{
-        val random = Random.Default
-        val rojo= random.nextInt(256)
-        val verde= random.nextInt(256)
-        val azul= random.nextInt(256)
-        return Color.rgb(rojo,verde,azul)
+    private fun resetCoordenas(cuadrado: Cuadrado, vBox: View) {
+        val newX = vBox.x
+        val newY = vBox.y
+        cuadrado.y = newY.toInt()
+        cuadrado.x = newX.toInt()
     }
 
-    private fun actualizarVista(cuadrado : Cuadrado, cuadradoView: View){
-        //aqui es donde enlazamos la vista con el objeto
-        //la vista actualizará su ancho y alto con los datos del objeto
-        cuadradoView.layoutParams.width = cuadrado.ancho
-        cuadradoView.layoutParams.height = cuadrado.alto
-        //Cambiamos color
-        cuadradoView.setBackgroundColor(cuadrado.color)
-        //actualizar cordenadas
-        cuadradoView.x = cuadrado.x.toFloat()
-        cuadradoView.y = cuadrado.y.toFloat()
-        //ejecutar los cambios
-        cuadradoView.requestLayout()
+    private fun updateView(cuadrado: CuadradoBorde, vSquare: View) {
+
+        //Aqui es donde enlazamos la vista con el objeto
+        val params = vSquare.layoutParams
+        params.width = cuadrado.ancho
+        params.height = cuadrado.alto
+        vSquare.layoutParams = params
+
+        //Cambiar el color
+       // vBox.setBackgroundColor(cuadrado.color)
+
+        //cambiamos el color del fondo y del borde usando GradientDrawable
+        val drawable: GradientDrawable = GradientDrawable()
+        //Asignamos color de fondo
+        drawable.setColor(cuadrado.color)
+        //Asignamos color y ancho del borde
+        drawable.setStroke(20,cuadrado.colorBorde)
+        vSquare.background = drawable
+
+
+        //actualizar coordenadas
+        vSquare.x = cuadrado.x.toFloat()
+        vSquare.y = cuadrado.y.toFloat()
+
+        //aplicar los cambios
+        vSquare.requestLayout()
+
     }
+}
+
+private fun randomColor(): Int {
+
+    val randomR = Random.nextInt(256)
+    val randomG = Random.nextInt(256)
+    val randomB = Random.nextInt(256)
+    //Construir color
+
+
+    return Color.rgb(randomR, randomG, randomB)
 }

@@ -1,10 +1,15 @@
-package model;
+package model
 
 import android.graphics.Color
 
-public class CuadradoBordes(color: Int, ancho: Int, alto: Int, var bordeColor: Int = Color.BLACK): Cuadrado(color,ancho,alto) {
-    //metodo nuevo cambiarColorBorde
+class CuadradoBorde(color: Int, alto: Int, ancho: Int, var colorBorde: Int = Color.BLACK) :
+    Cuadrado(color, alto, ancho) {
+
+    //Metodo para cambiar el color del borde
     fun cambiarColorBorde(nuevoColorBorde: Int) {
-        bordeColor = nuevoColorBorde
+        colorBorde = nuevoColorBorde
     }
+
+
 }
+
