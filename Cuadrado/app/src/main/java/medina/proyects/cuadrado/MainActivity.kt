@@ -66,6 +66,7 @@ class MainActivity : AppCompatActivity() {
 
             btnBorderColor.setOnClickListener {
                 cuadrado.cambiarColorBorde(randomColor())
+                // cuadrado.cambiarColorBorde(nuevoColorBorde = CuadradoBorde.ManejoColor.ColorBordeNested())
                 updateView(cuadrado, vSquare)
             }
 
@@ -141,15 +142,16 @@ class MainActivity : AppCompatActivity() {
         vSquare.requestLayout()
 
     }
-}
 
-private fun randomColor(): Int {
+    private fun randomColor(): Int {
 
-    val randomR = Random.nextInt(256)
-    val randomG = Random.nextInt(256)
-    val randomB = Random.nextInt(256)
-    //Construir color
+        val randomR = Random.nextInt(256)
+        val randomG = Random.nextInt(256)
+        val randomB = Random.nextInt(256)
+        //Construir color
 
 
-    return Color.rgb(randomR, randomG, randomB)
+        return Color.rgb(randomR, randomG, randomB)
+    }
+
 }
