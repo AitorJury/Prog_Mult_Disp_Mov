@@ -1,4 +1,4 @@
-package com.example.boxv2
+package medina.proyects.cuadrado
 
 import android.content.Context
 import model.Cuadrado
@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import medina.proyects.cuadrado.R
 import model.CuadradoBorde
 import kotlin.random.Random
 
