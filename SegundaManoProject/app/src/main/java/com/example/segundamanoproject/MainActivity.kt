@@ -13,6 +13,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.segundamanoproject.ui.pantallas.PantallaGale
+import com.example.segundamanoproject.ui.pantallas.PantallaInfo
 import com.example.segundamanoproject.ui.pantallas.PantallaInicio
 import com.example.segundamanoproject.ui.theme.SegundaManoProjectTheme
 
@@ -36,7 +38,9 @@ fun ObjectApp() {
     // Controlador de navegación
     val navController = rememberNavController()
     // Crear contenedor de navegacion: definir las rutas
-    NavHost(navController = navController, startDestination = "inicio"){
+    NavHost(navController = navController, startDestination = "inicio") {
         composable("inicio") {PantallaInicio(navController)}
+        composable("info") {PantallaInfo(navController)}
+        composable("galeria") {PantallaGale(navController)}
     }
 }

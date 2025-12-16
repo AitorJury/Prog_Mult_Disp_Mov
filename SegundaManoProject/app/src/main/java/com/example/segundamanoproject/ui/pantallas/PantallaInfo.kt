@@ -12,26 +12,24 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 
 @Composable
-fun PantallaInicio(navController: NavHostController){
+fun PantallaInfo(navController: NavHostController){
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        Text("Bienvenid@ a la app", style = MaterialTheme.typography.headlineSmall)
-        Spacer(modifier = Modifier.height(24.dp))
         Button(
-            onClick = {navController.navigate("info")}
-        ) {Text("Pasar a los créditos")}
+            onClick = {navController.popBackStack()},
+            modifier = Modifier.align(Alignment.Start)
+        ) {
+            Text("Volver")}
         Spacer(modifier = Modifier.height(24.dp))
-        Button(
-            onClick = {navController.navigate("galeria")}
-        ) {Text("Pasar al repositorio de fotos")}
+        Text("Desarrollado por Aitor Jury", style = MaterialTheme.typography.headlineLarge)
+        Spacer(modifier = Modifier.height(24.dp))
+        Text("Esta app sirve para algo", style = MaterialTheme.typography.headlineSmall)
     }
 }
