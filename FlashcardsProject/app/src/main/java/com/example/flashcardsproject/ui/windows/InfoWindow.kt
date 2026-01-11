@@ -15,6 +15,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
+/**
+ * Ventana de información y créditos del proyecto.
+ * Presenta la autoría y el propósito pedagógico de la aplicación con un diseño minimalista.
+ *
+ * @param navController Controlador de navegación para regresar al menú principal.
+ */
 @Composable
 fun InfoWindow(navController: NavHostController) {
     Surface(
@@ -26,6 +32,7 @@ fun InfoWindow(navController: NavHostController) {
                 .fillMaxSize()
                 .padding(24.dp)
         ) {
+            // Botón de salida para volver a la pila de navegación anterior
             IconButton(onClick = { navController.popBackStack() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -36,6 +43,7 @@ fun InfoWindow(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(40.dp))
 
+            // Título de la aplicación con espaciado entre líneas personalizado
             Text(
                 text = "Proyecto\nFlashcards",
                 style = MaterialTheme.typography.displayMedium,
@@ -46,6 +54,7 @@ fun InfoWindow(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Detalle decorativo: línea de acento horizontal que refuerza la identidad visual (branding)
             Box(
                 modifier = Modifier
                     .width(60.dp)
@@ -58,6 +67,10 @@ fun InfoWindow(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(48.dp))
 
+            /**
+             * Tarjeta de créditos del desarrollador.
+             * Utiliza 'surfaceVariant' con transparencia para una integración estética con el fondo.
+             */
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -69,12 +82,14 @@ fun InfoWindow(navController: NavHostController) {
                     modifier = Modifier.padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    // Etiqueta de función (Label)
                     Text(
                         text = "Desarrollado por",
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.primary
                     )
 
+                    // Nombre del autor con énfasis tipográfico
                     Text(
                         text = "Aitor Jury Rodríguez",
                         style = MaterialTheme.typography.headlineSmall,
@@ -84,6 +99,7 @@ fun InfoWindow(navController: NavHostController) {
 
                     Spacer(modifier = Modifier.height(24.dp))
 
+                    // Descripción del propósito de la herramienta
                     Text(
                         text = "Una herramienta educativa diseñada para dominar la teoría que necesiten mediante memoria visual.",
                         style = MaterialTheme.typography.bodyMedium,
@@ -94,8 +110,10 @@ fun InfoWindow(navController: NavHostController) {
                 }
             }
 
+            // Espaciador flexible (weight 1f) que empuja el texto de versión hacia la parte inferior
             Spacer(modifier = Modifier.weight(1f))
 
+            // Información de versión y control de calidad
             Text(
                 text = "Versión 1.0.0",
                 modifier = Modifier.fillMaxWidth(),

@@ -16,12 +16,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
+/**
+ * Pantalla de inicio de la aplicación (Menú Principal).
+ * Actúa como el centro de mando permitiendo el acceso a las funciones de consulta,
+ * creación y visualización de información del proyecto.
+ *
+ * @param navController Controlador que gestiona el stack de navegación.
+ */
 @Composable
 fun HomeWindow(navController: NavHostController) {
+    // Surface proporciona el lienzo de fondo respetando el color del tema
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
+        // Disposición vertical centrada para los elementos de marca y menú
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -29,6 +38,7 @@ fun HomeWindow(navController: NavHostController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            // Título de la aplicación con tipografía de alto impacto
             Text(
                 text = "Gestor de\nFlashcards",
                 style = MaterialTheme.typography.displayLarge,
@@ -40,6 +50,7 @@ fun HomeWindow(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
+            // Subtítulo motivador con opacidad suave para contraste jerárquico
             Text(
                 text = "Organiza tu aprendizaje",
                 style = MaterialTheme.typography.bodyLarge,
@@ -48,6 +59,10 @@ fun HomeWindow(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(56.dp))
 
+            /**
+             * Contenedor de acciones principales.
+             * Se utiliza una tarjeta (Card) para agrupar visualmente los botones de navegación.
+             */
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(24.dp),
@@ -59,6 +74,7 @@ fun HomeWindow(navController: NavHostController) {
                     modifier = Modifier.padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    // Botón para acceder al listado de álbumes existentes
                     Button(
                         onClick = { navController.navigate("album_list") },
                         modifier = Modifier
@@ -80,6 +96,7 @@ fun HomeWindow(navController: NavHostController) {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    // Botón para iniciar el flujo de creación de un nuevo álbum
                     Button(
                         onClick = { navController.navigate("create_album") },
                         modifier = Modifier
@@ -101,6 +118,7 @@ fun HomeWindow(navController: NavHostController) {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    // Botón de estilo 'Outlined' para la sección de créditos (menor importancia visual)
                     OutlinedButton(
                         onClick = { navController.navigate("info") },
                         modifier = Modifier

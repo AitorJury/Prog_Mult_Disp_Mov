@@ -17,8 +17,13 @@ import androidx.navigation.NavHostController
 import com.example.flashcardsproject.data.Album
 import com.example.flashcardsproject.data.FlashcardRepository
 
+/**
+ * Ventana que despliega el listado de álbumes creados por el usuario.
+ * Actúa como el centro de gestión para navegar a las sesiones de estudio o edición.
+ */
 @Composable
 fun AlbumListWindow(navController: NavHostController) {
+    // Referencia directa a la lista reactiva del repositorio
     val albums = FlashcardRepository.albums
 
     Surface(
@@ -26,6 +31,7 @@ fun AlbumListWindow(navController: NavHostController) {
         color = MaterialTheme.colorScheme.background
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
+            // Barra superior con botón de retroceso y título de la sección
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -46,9 +52,13 @@ fun AlbumListWindow(navController: NavHostController) {
                 )
             }
 
+            /**
+             * Listado optimizado de álbumes.
+             * LazyColumn solo renderiza los elementos visibles en pantalla (equivalente a RecyclerView).
+             */
             LazyColumn(
                 contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp) // Espaciado uniforme entre tarjetas
             ) {
                 items(albums) { album ->
                     AlbumItem(
@@ -63,11 +73,26 @@ fun AlbumListWindow(navController: NavHostController) {
     }
 }
 
+/**
+ * Componente representativo de un álbum individual dentro de la lista.
+ * Gestiona sus propios estados de menú contextual y diálogos de confirmación.
+ * * @param album Objeto de datos que contiene la información del álbum.
+ * @param onOpen Callback para iniciar la sesión de estudio.
+ * @param onAddCard Callback para navegar al formulario de creación de tarjetas.
+ * @param onDelete Callback para ejecutar la eliminación en el repositorio.
+ */
 @Composable
 fun AlbumItem(album: Album, onOpen: () -> Unit, onAddCard: () -> Unit, onDelete: () -> Unit) {
+    // Controla la visibilidad del menú desplegable de opciones (tres puntos)
     var showMenu by remember { mutableStateOf(false) }
+
+    // Controla la visibilidad del aviso de seguridad para borrar el álbum
     var showDeleteDialog by remember { mutableStateOf(false) }
 
+    /**
+     * Diálogo de confirmación (Seguridad de usuario).
+     * Evita eliminaciones accidentales siguiendo las guías de Material Design.
+     */
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
@@ -75,7 +100,7 @@ fun AlbumItem(album: Album, onOpen: () -> Unit, onAddCard: () -> Unit, onDelete:
             text = { Text("Esta acción borrará todas las tarjetas dentro de '${album.name}'.") },
             confirmButton = {
                 TextButton(onClick = {
-                    onDelete()
+                    onDelete() // Ejecuta la lógica de borrado heredada
                     showDeleteDialog = false
                 }) {
                     Text("Eliminar", color = MaterialTheme.colorScheme.error)
@@ -104,6 +129,7 @@ fun AlbumItem(album: Album, onOpen: () -> Unit, onAddCard: () -> Unit, onDelete:
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            // Información textual del álbum (Nombre y contador de tarjetas)
             Column {
                 Text(
                     text = album.name,
@@ -117,6 +143,7 @@ fun AlbumItem(album: Album, onOpen: () -> Unit, onAddCard: () -> Unit, onDelete:
                 )
             }
 
+            // Menú de acciones secundarias
             Box {
                 IconButton(onClick = { showMenu = true }) {
                     Icon(Icons.Default.MoreVert, contentDescription = "Opciones")
@@ -140,12 +167,13 @@ fun AlbumItem(album: Album, onOpen: () -> Unit, onAddCard: () -> Unit, onDelete:
                             onAddCard()
                         }
                     )
+                    // Separador visual para diferenciar acciones destructivas
                     Divider()
                     DropdownMenuItem(
                         text = { Text("Eliminar álbum", color = MaterialTheme.colorScheme.error) },
                         onClick = {
                             showMenu = false
-                            showDeleteDialog = true
+                            showDeleteDialog = true // Activa el diálogo de confirmación
                         }
                     )
                 }

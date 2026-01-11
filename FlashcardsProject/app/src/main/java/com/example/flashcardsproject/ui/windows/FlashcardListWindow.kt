@@ -22,8 +22,13 @@ import androidx.navigation.NavHostController
 import com.example.flashcardsproject.data.Flashcard
 import com.example.flashcardsproject.data.FlashcardRepository
 
+/**
+ * Ventana de estudio que visualiza las tarjetas de un álbum específico.
+ * Implementa una lógica de carga dinámica basada en el ID del álbum recibido.
+ */
 @Composable
 fun FlashcardListWindow(navController: NavHostController, albumId: Int) {
+    // Recupera el álbum del repositorio. Se usa 'remember' para evitar búsquedas innecesarias en cada recomposición.
     val album = remember { FlashcardRepository.getAlbumById(albumId) }
 
     Surface(
@@ -31,6 +36,7 @@ fun FlashcardListWindow(navController: NavHostController, albumId: Int) {
         color = MaterialTheme.colorScheme.background
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
+            // Cabecera dinámica que muestra el nombre del álbum actual
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -53,6 +59,10 @@ fun FlashcardListWindow(navController: NavHostController, albumId: Int) {
                 )
             }
 
+            /**
+             * Lógica de estado vacío: Si el álbum no existe o no tiene tarjetas,
+             * se muestra un mensaje informativo en lugar de una pantalla vacía.
+             */
             if (album == null || album.cards.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -66,6 +76,7 @@ fun FlashcardListWindow(navController: NavHostController, albumId: Int) {
                     )
                 }
             } else {
+                // Listado vertical de tarjetas con espaciado definido
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(16.dp),
@@ -80,25 +91,36 @@ fun FlashcardListWindow(navController: NavHostController, albumId: Int) {
     }
 }
 
+/**
+ * Componente individual de Flashcard con capacidad de rotación 3D.
+ * Utiliza transiciones de estado para animar el giro de la tarjeta.
+ */
 @Composable
 fun FlashcardItem(flashcard: Flashcard) {
+    // Estado booleano para controlar si la tarjeta está volteada
     var isFlipped by remember { mutableStateOf(false) }
 
+    // Animación suavizada del valor de rotación (0 a 180 grados)
     val rotation by animateFloatAsState(
         targetValue = if (isFlipped) 180f else 0f,
-        animationSpec = tween(durationMillis = 600)
+        animationSpec = tween(durationMillis = 600) // Duración de la transición en milisegundos
     )
+
+
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(280.dp)
-            .clickable { isFlipped = !isFlipped }
+            .clickable { isFlipped = !isFlipped } // Alterna el estado al hacer clic
             .graphicsLayer {
+                // Aplicación de la rotación en el eje Y
                 rotationY = rotation
+                // Define la distancia de la cámara para que el efecto 3D sea realista y no plano
                 cameraDistance = 12f * density
             },
         colors = CardDefaults.cardColors(
+            // Cambio dinámico de color según el grado de rotación para simular iluminación/profundidad
             containerColor = if (rotation > 90f)
                 MaterialTheme.colorScheme.surfaceVariant
             else
@@ -110,6 +132,11 @@ fun FlashcardItem(flashcard: Flashcard) {
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize()
         ) {
+            /**
+             * Decisión de renderizado:
+             * Si la rotación es <= 90°, mostramos el anverso (Imagen).
+             * Si es > 90°, mostramos el reverso (Texto).
+             */
             if (rotation <= 90f) {
                 Image(
                     painter = painterResource(id = flashcard.frontImage),
@@ -119,6 +146,10 @@ fun FlashcardItem(flashcard: Flashcard) {
                         .padding(24.dp)
                 )
             } else {
+                /**
+                 * Nota técnica: Al rotar la tarjeta 180°, el texto aparecería en espejo.
+                 * Se aplica una rotación inversa de 180° en el eje Y al texto para compensarlo.
+                 */
                 Text(
                     text = flashcard.backText,
                     style = MaterialTheme.typography.headlineMedium,

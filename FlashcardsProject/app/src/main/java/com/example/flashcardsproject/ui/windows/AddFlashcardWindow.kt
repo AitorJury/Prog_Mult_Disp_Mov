@@ -24,10 +24,21 @@ import androidx.navigation.NavHostController
 import com.example.flashcardsproject.R
 import com.example.flashcardsproject.data.FlashcardRepository
 
+/**
+ * Pantalla de formulario para la creación de nuevas tarjetas de estudio.
+ * Permite al usuario seleccionar un icono visual y asignar un nombre descriptivo.
+ * * @param navController Controlador de navegación para gestionar el flujo de pantallas.
+ * @param albumId Identificador del álbum destino donde se insertará la tarjeta.
+ */
 @Composable
 fun AddFlashcardWindow(navController: NavHostController, albumId: Int) {
+    // Estado local para capturar la descripción escrita por el usuario
     var backText by remember { mutableStateOf("") }
+
+    // Lista de recursos gráficos disponibles para representar la herramienta
     val availableImages = listOf(R.drawable.image1, R.drawable.image2, R.drawable.image3)
+
+    // Estado local para rastrear qué imagen de la cuadrícula ha seleccionado el usuario
     var selectedImage by remember { mutableStateOf(availableImages[0]) }
 
     Surface(
@@ -39,6 +50,7 @@ fun AddFlashcardWindow(navController: NavHostController, albumId: Int) {
                 .fillMaxSize()
                 .padding(24.dp)
         ) {
+            // Botón de retroceso para cancelar la operación y volver a la vista anterior
             IconButton(onClick = { navController.popBackStack() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -66,6 +78,10 @@ fun AddFlashcardWindow(navController: NavHostController, albumId: Int) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            /**
+             * Cuadrícula de selección de iconos.
+             * Utiliza LazyVerticalGrid para optimizar el rendimiento y organizar los elementos en 3 columnas.
+             */
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
                 modifier = Modifier
@@ -77,9 +93,10 @@ fun AddFlashcardWindow(navController: NavHostController, albumId: Int) {
                     val isSelected = selectedImage == img
                     Box(
                         modifier = Modifier
-                            .aspectRatio(1f)
+                            .aspectRatio(1f) // Mantiene los contenedores perfectamente cuadrados
                             .clip(RoundedCornerShape(12.dp))
                             .background(
+                                // Feedback visual: cambia el fondo si está seleccionado
                                 if (isSelected) MaterialTheme.colorScheme.primaryContainer
                                 else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
                             )
@@ -88,7 +105,7 @@ fun AddFlashcardWindow(navController: NavHostController, albumId: Int) {
                                 color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
                                 shape = RoundedCornerShape(12.dp)
                             )
-                            .clickable { selectedImage = img },
+                            .clickable { selectedImage = img }, // Actualiza el estado al hacer clic
                         contentAlignment = Alignment.Center
                     ) {
                         Image(
@@ -110,6 +127,7 @@ fun AddFlashcardWindow(navController: NavHostController, albumId: Int) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Campo de entrada de texto para la solución o descripción de la flashcard
             OutlinedTextField(
                 value = backText,
                 onValueChange = { backText = it },
@@ -120,17 +138,23 @@ fun AddFlashcardWindow(navController: NavHostController, albumId: Int) {
                 shape = RoundedCornerShape(16.dp)
             )
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1f)) // Empuja el botón hacia la parte inferior
 
+            /**
+             * Botón de confirmación.
+             * Lógica de negocio: solo se habilita si el campo de texto contiene información.
+             */
             Button(
                 onClick = {
+                    // Persiste la nueva tarjeta en el repositorio global
                     FlashcardRepository.addFlashcardToAlbum(albumId, selectedImage, backText)
+                    // Cierra la ventana y regresa a la lista de álbumes
                     navController.popBackStack()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                enabled = backText.isNotBlank(),
+                enabled = backText.isNotBlank(), // Validación básica de formulario
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Text(
