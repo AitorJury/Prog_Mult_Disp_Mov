@@ -93,7 +93,7 @@ fun Funcion2() {
     }
 }
 
-// @Preview(showBackground = true, widthDp= 200, heightDp = 100)
+@Preview(showBackground = true, widthDp= 200, heightDp = 100)
 @Composable
 fun Textos() {
     Box(
@@ -116,15 +116,13 @@ fun Textos() {
     }
 }
 
-@Preview(showBackground = true)
+// @Preview(showBackground = true)
 @Composable
 fun Imagen() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
-    ) {
-        Image
-    }
+    )
 }
 
 @Composable
@@ -146,7 +144,7 @@ fun Funcion3() {
                 .background(Color.Magenta))
     }
 }
-// @Preview(showBackground = true, widthDp = 200, heightDp = 100)
+@Preview(showBackground = true, widthDp = 200, heightDp = 100)
 @Composable
 fun Boton() {
     Box (
@@ -171,7 +169,7 @@ fun Boton() {
 }
 
 
-// @Preview(showBackground = true, name = "Antonio Preview")
+@Preview(showBackground = true, name = "Antonio Preview")
 @Composable
 fun GreetingPreview() {
     MiSegundoComposeTheme {
