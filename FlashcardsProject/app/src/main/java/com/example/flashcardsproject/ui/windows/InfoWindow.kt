@@ -16,8 +16,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
 /**
- * Ventana de información y créditos.
- * Se ha añadido statusBarsPadding para respetar la barra de notificaciones sin separar el fondo.
+ * Pantalla de información técnica, descripción del proyecto y créditos.
+ * @param navController Controlador de navegación para gestionar el retorno a la pantalla de origen.
  */
 @Composable
 fun InfoWindow(navController: NavHostController) {
@@ -28,9 +28,11 @@ fun InfoWindow(navController: NavHostController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .statusBarsPadding() // Asegura que el contenido empiece debajo de la barra de estado
+                // Márgenes superiores para evitar la superposición.
+                .statusBarsPadding()
                 .padding(24.dp)
         ) {
+            // Botón de navegación hacia atrás.
             IconButton(onClick = { navController.popBackStack() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -41,6 +43,7 @@ fun InfoWindow(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(40.dp))
 
+            // Título de la aplicación.
             Text(
                 text = "Proyecto\nFlashcards",
                 style = MaterialTheme.typography.displayMedium,
@@ -51,6 +54,7 @@ fun InfoWindow(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Separador.
             Box(
                 modifier = Modifier
                     .width(60.dp)
@@ -63,6 +67,7 @@ fun InfoWindow(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(48.dp))
 
+            // Tarjeta de presentación de autoría y misión del proyecto.
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -89,8 +94,9 @@ fun InfoWindow(navController: NavHostController) {
 
                     Spacer(modifier = Modifier.height(24.dp))
 
+                    // Resumen del propósito de la aplicación.
                     Text(
-                        text = "Una herramienta educativa diseñada para dominar la teoría mediante memoria visual y gestión personalizada de contenido.",
+                        text = "Una herramienta educativa diseñada para aprender teoría mediante memoria visual.",
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center,
                         lineHeight = 20.sp,
@@ -101,6 +107,7 @@ fun InfoWindow(navController: NavHostController) {
 
             Spacer(modifier = Modifier.weight(1f))
 
+            // Identificador de versión.
             Text(
                 text = "Versión 1.0.0",
                 modifier = Modifier.fillMaxWidth(),
@@ -109,7 +116,7 @@ fun InfoWindow(navController: NavHostController) {
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
             )
 
-            // Espacio de seguridad inferior
+            // Margen inferior.
             Spacer(modifier = Modifier.height(16.dp))
         }
     }

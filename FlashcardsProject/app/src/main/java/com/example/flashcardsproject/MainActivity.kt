@@ -19,21 +19,28 @@ import com.example.flashcardsproject.data.FlashcardRepository
 import com.example.flashcardsproject.ui.windows.*
 import com.example.flashcardsproject.ui.theme.FlashcardsProjectTheme
 
+/**
+ * Punto de entrada principal de la aplicación.
+ * Gestiona el ciclo de vida inicial, la configuración del sistema visual y la inicialización.
+ */
 class MainActivity : ComponentActivity() {
+
+    // Configuración inicial al crear la actividad.
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Implementación de la pantalla de carga.
         installSplashScreen()
         super.onCreate(savedInstanceState)
 
-        // Mantiene el diseño moderno pero permitiremos que el fondo fluya hasta arriba
+        // Habilita el diseño Edge-to-Edge.
         enableEdgeToEdge()
 
+        // Inicialización del repositorio y carga de datos.
         FlashcardRepository.init(this)
 
         setContent {
             FlashcardsProjectTheme {
-                // HEMOS QUITADO EL statusBarsPadding() DE AQUÍ.
-                // Ahora el color de fondo será continuo hasta arriba.
+                // Contenedor base de la aplicación.
                 Scaffold(modifier = Modifier.fillMaxSize()) {
                     MainNavigation()
                 }
@@ -42,6 +49,10 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/**
+ * Orquestador de navegación de la aplicación.
+ * Define todas las rutas, los argumentos necesarios y las transiciones.
+ */
 @Composable
 fun MainNavigation() {
     val navController = rememberNavController()
@@ -49,15 +60,17 @@ fun MainNavigation() {
     NavHost(
         navController = navController,
         startDestination = "init",
+        // Definición de transiciones.
         enterTransition = { fadeIn(animationSpec = tween(400)) + slideInHorizontally() },
         exitTransition = { fadeOut(animationSpec = tween(400)) + slideOutHorizontally() }
     ) {
+        // Rutas básicas.
         composable("init") { HomeWindow(navController) }
         composable("info") { InfoWindow(navController) }
         composable("album_list") { AlbumListWindow(navController) }
         composable("create_album") { CreateAlbumWindow(navController) }
 
-        // Ruta clásica: Estudiar tarjetas (con giro 3D)
+        // Ruta: Visualización y estudio de tarjetas.
         composable(
             route = "list/{albumId}",
             arguments = listOf(navArgument("albumId") { type = NavType.IntType })
@@ -66,7 +79,7 @@ fun MainNavigation() {
             FlashcardListWindow(navController, albumId)
         }
 
-        // NUEVA RUTA: Galería de imágenes (Mirar imágenes con zoom/rotación)
+        // Ruta: Galería de imágenes.
         composable(
             route = "gallery/{albumId}",
             arguments = listOf(navArgument("albumId") { type = NavType.IntType })
@@ -75,6 +88,7 @@ fun MainNavigation() {
             GalleryViewWindow(navController, albumId)
         }
 
+        // Ruta: Editor de tarjetas.
         composable(
             route = "add_card/{albumId}",
             arguments = listOf(navArgument("albumId") { type = NavType.IntType })

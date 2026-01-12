@@ -17,7 +17,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
 /**
- * Pantalla de inicio con corrección de márgenes para diseño Edge-to-Edge.
+ * Pantalla de menú principal de la aplicación.
+ * Presenta las opciones de la aplicación.
+ * @param navController Controlador de navegación para redirigir a las diferentes secciones.
  */
 @Composable
 fun HomeWindow(navController: NavHostController) {
@@ -28,13 +30,15 @@ fun HomeWindow(navController: NavHostController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .statusBarsPadding() // EVITA QUE EL TÍTULO CHOQUE CON LA BARRA DE ESTADO
+                // Inserción de márgenes para la barra de estado.
+                .statusBarsPadding()
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Espaciador flexible para centrar el contenido verticalmente
+            // Espaciador superiorpara el título.
             Spacer(modifier = Modifier.weight(1f))
 
+            // Título principal de la aplicación.
             Text(
                 text = "Gestor de\nFlashcards",
                 style = MaterialTheme.typography.displayLarge,
@@ -46,6 +50,7 @@ fun HomeWindow(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
+            // Eslogan de la aplicación.
             Text(
                 text = "Organiza tu aprendizaje",
                 style = MaterialTheme.typography.bodyLarge,
@@ -54,6 +59,7 @@ fun HomeWindow(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(56.dp))
 
+            // Contenedor de acciones principales.
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(24.dp),
@@ -65,6 +71,7 @@ fun HomeWindow(navController: NavHostController) {
                     modifier = Modifier.padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    // Navegación a la lista de albumes.
                     Button(
                         onClick = { navController.navigate("album_list") },
                         modifier = Modifier
@@ -75,7 +82,7 @@ fun HomeWindow(navController: NavHostController) {
                         Icon(Icons.Default.List, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Revisar Álbumes",
+                            text = "Revisar Albumes",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
@@ -83,6 +90,7 @@ fun HomeWindow(navController: NavHostController) {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    // Acceso a la creación de un nuevo album.
                     Button(
                         onClick = { navController.navigate("create_album") },
                         modifier = Modifier
@@ -93,7 +101,7 @@ fun HomeWindow(navController: NavHostController) {
                         Icon(Icons.Default.Add, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Crear Nuevo Álbum",
+                            text = "Crear Nuevo Album",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
@@ -101,6 +109,7 @@ fun HomeWindow(navController: NavHostController) {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    // Información sobre la aplicación y autoría.
                     OutlinedButton(
                         onClick = { navController.navigate("info") },
                         modifier = Modifier
@@ -118,7 +127,7 @@ fun HomeWindow(navController: NavHostController) {
                 }
             }
 
-            // Espaciador flexible inferior para mantener el equilibrio visual
+            // Espaciador inferior.
             Spacer(modifier = Modifier.weight(1.2f))
         }
     }
