@@ -16,14 +16,18 @@ import androidx.navigation.NavHostController
 import com.example.flashcardsproject.data.FlashcardRepository
 
 /**
- * Pantalla dedicada a la creación de nuevos álbumes con soporte para persistencia.
+ * Pantalla de creación de nuevos albumes.
+ * @param navController Controlador de navegación para regresar a la pantalla anterior tras guardar.
  */
 @Composable
 fun CreateAlbumWindow(navController: NavHostController) {
-    // Obtenemos el contexto para permitir que el repositorio guarde en el XML
+    // Contexto local para realizar operaciones de escritura en SharedPreferences.
     val context = LocalContext.current
 
+    // Estado reactivo que almacena el texto introducido por el usuario.
     var albumName by remember { mutableStateOf("") }
+
+    // El nombre no puede estar vacío ni contener solo espacios.
     val isNameValid = albumName.isNotBlank()
 
     Surface(
@@ -35,6 +39,7 @@ fun CreateAlbumWindow(navController: NavHostController) {
                 .fillMaxSize()
                 .padding(24.dp)
         ) {
+            // Acción de navegación hacia atrás.
             IconButton(onClick = { navController.popBackStack() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -45,8 +50,9 @@ fun CreateAlbumWindow(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
+            // Cabecera.
             Text(
-                text = "Nuevo Álbum",
+                text = "Nuevo Album",
                 style = MaterialTheme.typography.displaySmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
@@ -60,10 +66,11 @@ fun CreateAlbumWindow(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(48.dp))
 
+            // Campo de entrada de texto principal.
             OutlinedTextField(
                 value = albumName,
                 onValueChange = { albumName = it },
-                label = { Text("Nombre del álbum") },
+                label = { Text("Nombre del album") },
                 placeholder = { Text("Ej: Herramientas de Carpintería") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -76,17 +83,14 @@ fun CreateAlbumWindow(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            /**
-             * Al hacer clic, enviamos el nombre y el contexto al repositorio.
-             * Esto asegura que el álbum se escriba en el SharedPreferences inmediatamente.
-             */
+            // Botón de confirmación.
             Button(
                 onClick = {
-                    // Ahora pasamos el contexto como segundo parámetro
+                    // Sincronización de datos con el almacenamiento local.
                     FlashcardRepository.createAlbum(albumName, context)
                     navController.popBackStack()
                 },
-                enabled = isNameValid,
+                enabled = isNameValid, // Control de estado para evitar entradas vacías.
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -95,7 +99,7 @@ fun CreateAlbumWindow(navController: NavHostController) {
                 Icon(Icons.Default.Check, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Guardar Álbum",
+                    text = "Guardar Album",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )

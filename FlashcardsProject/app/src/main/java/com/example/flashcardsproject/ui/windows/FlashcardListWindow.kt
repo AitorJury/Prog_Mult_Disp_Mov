@@ -22,8 +22,15 @@ import coil.compose.AsyncImage
 import com.example.flashcardsproject.data.Flashcard
 import com.example.flashcardsproject.data.FlashcardRepository
 
+/**
+ * Pantalla de visualización y estudio de tarjetas para un album específico.
+ * Presenta una lista de tarjetas interactivas.
+ * @param navController Controlador de navegación para gestionar el flujo de la aplicación.
+ * @param albumId Identificador único del album que se desea consultar.
+ */
 @Composable
 fun FlashcardListWindow(navController: NavHostController, albumId: Int) {
+    // Recupera el album desde el repositorio central de datos.
     val album = remember { FlashcardRepository.getAlbumById(albumId) }
 
     Surface(
@@ -33,6 +40,8 @@ fun FlashcardListWindow(navController: NavHostController, albumId: Int) {
         color = MaterialTheme.colorScheme.background
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
+
+            // Cabecera.
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -48,24 +57,25 @@ fun FlashcardListWindow(navController: NavHostController, albumId: Int) {
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = album?.name ?: "Álbum no encontrado",
+                    text = album?.name ?: "Album no encontrado",
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
             }
 
+            // Si no hay tarjetas, notifica al usuario.
             if (album == null || album.cards.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = "Este álbum está vacío.",
+                            text = "Este album está vacío.",
                             textAlign = TextAlign.Center,
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        // Botón central si está vacío
+
                         Button(onClick = { navController.navigate("add_card/$albumId") }) {
                             Icon(Icons.Default.Add, contentDescription = null)
                             Spacer(modifier = Modifier.width(8.dp))
@@ -74,6 +84,7 @@ fun FlashcardListWindow(navController: NavHostController, albumId: Int) {
                     }
                 }
             } else {
+                // Lista de las tarjetas existentes en el album.
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(16.dp),
@@ -83,7 +94,7 @@ fun FlashcardListWindow(navController: NavHostController, albumId: Int) {
                         FlashcardItem(flashcard)
                     }
 
-                    // PUNTO 3: Botón para añadir más tarjetas al final de la lista
+                    // Botón de inserción rápida al final de la lista.
                     item {
                         OutlinedButton(
                             onClick = { navController.navigate("add_card/$albumId") },
@@ -106,12 +117,15 @@ fun FlashcardListWindow(navController: NavHostController, albumId: Int) {
 }
 
 /**
- * Componente Flashcard (Mantiene tu lógica de giro 3D)
+ * Representa una tarjeta individual con capacidad de rotación.
+ * @param flashcard El objeto de datos que contiene el contenido frontal y posterior.
  */
 @Composable
 fun FlashcardItem(flashcard: Flashcard) {
+    // Estado para controlar si la tarjeta está girada.
     var isFlipped by remember { mutableStateOf(false) }
 
+    // Animación para el ángulo de rotación.
     val rotation by animateFloatAsState(
         targetValue = if (isFlipped) 180f else 0f,
         animationSpec = tween(durationMillis = 600)
@@ -121,10 +135,10 @@ fun FlashcardItem(flashcard: Flashcard) {
         modifier = Modifier
             .fillMaxWidth()
             .height(280.dp)
-            .clickable { isFlipped = !isFlipped }
+            .clickable { isFlipped = !isFlipped } // Alternar estado al hacer clic.
             .graphicsLayer {
-                rotationY = rotation
-                cameraDistance = 12f * density
+                rotationY = rotation // Aplica el giro en el eje vertical.
+                cameraDistance = 12f * density // Define la perspectiva para un efecto 3D realista.
             },
         colors = CardDefaults.cardColors(
             containerColor = if (rotation > 90f)
@@ -138,12 +152,16 @@ fun FlashcardItem(flashcard: Flashcard) {
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize()
         ) {
+            // Carga condicional basada en la rotación (90 grados).
             if (rotation <= 90f) {
+                // Cara frontal (Anverso).
                 CardFaceContent(
                     content = flashcard.frontContent,
                     isImage = flashcard.isFrontImage
                 )
             } else {
+                // Cara posterior (Reverso) .
+                // Invertimos la rotación interna.
                 Box(Modifier.graphicsLayer { rotationY = 180f }) {
                     CardFaceContent(
                         content = flashcard.backContent,
@@ -155,12 +173,17 @@ fun FlashcardItem(flashcard: Flashcard) {
     }
 }
 
+/**
+ * Componente interno encargado de cargar el tipo de contenido dentro de la cara de una tarjeta.
+ * @param content Cadena que contiene el texto o el URI de la imagen.
+ * @param isImage Booleano que define la lógica de renderizado a aplicar.
+ */
 @Composable
 fun CardFaceContent(content: String, isImage: Boolean) {
     if (isImage) {
         AsyncImage(
             model = content,
-            contentDescription = null,
+            contentDescription = "Imagen de la tarjeta",
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)

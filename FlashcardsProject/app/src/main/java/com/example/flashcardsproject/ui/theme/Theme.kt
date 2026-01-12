@@ -7,54 +7,86 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
 /**
- * Configuración de la paleta de colores para el modo noche.
- * Mapea los colores definidos en Color.kt a los roles semánticos de Material 3.
+ * Esquema de colores para el Modo Oscuro.
  */
 private val DarkColorScheme = darkColorScheme(
-    primary = BrandGreen,           // Color para botones y elementos destacados
-    background = DarkBackground,    // Color de fondo general de las pantallas
-    onBackground = DarkText,        // Color de texto sobre el fondo general
-    surface = DarkBackground,       // Superficie de componentes base
-    onSurface = DarkText,           // Texto sobre superficies base
-    surfaceVariant = DarkCardSurface, // Fondo específico para tarjetas (Cards)
-    onSurfaceVariant = DarkText,    // Texto dentro de las tarjetas
-    error = AlertCoral,             // Color para acciones destructivas o errores
-    secondary = ColdGray            // Color para elementos de menor énfasis
-)
-
-/**
- * Configuración de la paleta de colores para el modo claro.
- */
-private val LightColorScheme = lightColorScheme(
+    // Color principal de la marca.
     primary = BrandGreen,
-    background = LightBackground,
-    onBackground = LightText,
-    surface = LightBackground,
-    onSurface = LightText,
-    // Se usa una variante del gris con transparencia para fondos suaves de tarjetas
-    surfaceVariant = ColdGray.copy(alpha = 0.1f),
-    onSurfaceVariant = LightText,
+
+    // Color de fondo.
+    background = DarkBackground,
+
+    // Color de contraste para textos y elementos gráficos sobre el fondo principal.
+    onBackground = DarkText,
+
+    // Superficie base para componentes de interfaz.
+    surface = DarkBackground,
+
+    // Color de contraste para elementos.
+    onSurface = DarkText,
+
+    // Variante de superficie para elevar visualmente las tarjetas.
+    surfaceVariant = DarkCardSurface,
+
+    // Contenido dentro de contenedores surfaceVariant.
+    onSurfaceVariant = DarkText,
+
+    // Color para señalización de errores o acciones de borrado.
     error = AlertCoral,
+
+    // Color para elementos decorativos o de menor jerarquía visual.
     secondary = ColdGray
 )
 
 /**
- * Función principal del tema de la aplicación.
- * Envuelve la jerarquía de la UI para aplicar los estilos globales.
- * * @param darkTheme Determina si se aplica el esquema de colores oscuro. Por defecto detecta el sistema.
- * @param content El contenido de la aplicación que recibirá estos estilos.
+ * Esquema de colores para el Modo Claro.
+ */
+private val LightColorScheme = lightColorScheme(
+    // Color de marca.
+    primary = BrandGreen,
+
+    // Color de fondo.
+    background = LightBackground,
+
+    // Color de contraste para textos y elementos gráficos sobre el fondo principal.
+    onBackground = LightText,
+
+    // Superficie base para componentes de interfaz.
+    surface = LightBackground,
+
+    // Color de contraste para elementos.
+    onSurface = LightText,
+
+    // Variante de superficie con una opacidad reducida del 10%.
+    surfaceVariant = ColdGray.copy(alpha = 0.1f),
+
+    // Contenido dentro de contenedores surfaceVariant.
+    onSurfaceVariant = LightText,
+
+    // Color para señalización de errores o acciones de borrado.
+    error = AlertCoral,
+
+    // Color para elementos decorativos o de menor jerarquía visual.
+    secondary = ColdGray
+)
+
+/**
+ * Componente que define el tema visual de la aplicación. Aplica el sistema de diseño Material 3 de forma global.
+ * @param darkTheme Indica si debe forzarse el tema oscuro. Por defecto, utiliza la configuración del sistema.
+ * @param content Bloque de código composable que se renderiza bajo este tema.
  */
 @Composable
 fun FlashcardsProjectTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    // Selección dinámica del esquema de colores según el estado del sistema o preferencia
+    // Selección del esquema de colores en función de la preferencia de brillo del usuario.
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography, // Aplica la configuración tipográfica definida en Type.kt
+        // Configuración de fuentes y pesos de texto.
+        typography = Typography,
         content = content
     )
 }

@@ -28,13 +28,20 @@ import coil.compose.AsyncImage
 import com.example.flashcardsproject.data.FlashcardRepository
 
 /**
- * Ventana de Galería: Muestra todas las imágenes de un álbum en cuadrícula de 4 columnas.
- * Permite visualización avanzada con gestos táctiles.
+ * Pantalla de Galería de Imágenes.
+ * Extrae y presenta todas las imágenes contenidas en las tarjetas de un album.
+ * @param navController Controlador de navegación para el retorno a la pantalla anterior.
+ * @param albumId Identificador del album del cual se extraen las imágenes.
  */
 @Composable
 fun GalleryViewWindow(navController: NavHostController, albumId: Int) {
+    // Referencia al album recuperado del repositorio.
     val album = remember { FlashcardRepository.getAlbumById(albumId) }
-    // Filtramos solo los contenidos que son imágenes
+
+    /**
+     * Lista procesada de URIs. Filtra el contenido del album para obtener
+     * únicamente las rutas que corresponden a imágenes (frontales o posteriores).
+     */
     val images = remember(album) {
         val list = mutableListOf<String>()
         album?.cards?.forEach {
@@ -44,7 +51,7 @@ fun GalleryViewWindow(navController: NavHostController, albumId: Int) {
         list
     }
 
-    // Estado para controlar qué imagen se está viendo en grande
+    // Estado que almacena la URI de la imagen seleccionada para su visualización ampliada.
     var selectedImageUrl by remember { mutableStateOf<String?>(null) }
 
     Surface(
@@ -52,7 +59,8 @@ fun GalleryViewWindow(navController: NavHostController, albumId: Int) {
         color = MaterialTheme.colorScheme.background
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Cabecera con margen de seguridad
+
+            // Cabecera.
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -70,7 +78,7 @@ fun GalleryViewWindow(navController: NavHostController, albumId: Int) {
                 )
             }
 
-            // Cuadrícula de 4 columnas
+            // Cuadrícula de imágenes. Utiliza 4 columnas fijas.
             LazyVerticalGrid(
                 columns = GridCells.Fixed(4),
                 contentPadding = PaddingValues(8.dp),
@@ -80,7 +88,7 @@ fun GalleryViewWindow(navController: NavHostController, albumId: Int) {
                 items(images) { imageUrl ->
                     AsyncImage(
                         model = imageUrl,
-                        contentDescription = null,
+                        contentDescription = "Miniatura de galería",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .aspectRatio(1f)
@@ -92,14 +100,16 @@ fun GalleryViewWindow(navController: NavHostController, albumId: Int) {
         }
     }
 
-    // Si hay una imagen seleccionada, mostramos el visor con gestos
+    // Disparador de la pantalla completa cuando existe una selección.
     selectedImageUrl?.let { url ->
         FullScreenImageModal(url = url, onDismiss = { selectedImageUrl = null })
     }
 }
 
 /**
- * Diálogo a pantalla completa que permite manipular la imagen.
+ * Visionado de imágenes en pantalla completa.
+ * @param url URI de la imagen a cargar.
+ * @param onDismiss Callback para cerrar la pantalla y limpiar el estado de selección.
  */
 @Composable
 fun FullScreenImageModal(url: String, onDismiss: () -> Unit) {
@@ -113,9 +123,10 @@ fun FullScreenImageModal(url: String, onDismiss: () -> Unit) {
                 .background(MaterialTheme.colorScheme.background.copy(alpha = 0.95f)),
             contentAlignment = Alignment.Center
         ) {
+            // Componente para la manipulación de gestos.
             ZoomableImage(url)
 
-            // Botón para cerrar el visor
+            // Control de salida del visor.
             Button(
                 onClick = onDismiss,
                 modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 48.dp)
@@ -127,29 +138,30 @@ fun FullScreenImageModal(url: String, onDismiss: () -> Unit) {
 }
 
 /**
- * Componente que gestiona Zoom, Pan (Mover) y Rotación.
+ * Componente de visualización. Implementa reconocimiento de gestos múltiples.
+ * @param url URI del recurso visual a mostrar.
  */
 @Composable
 fun ZoomableImage(url: String) {
+    // Estados de transformación física de la imagen.
     var scale by remember { mutableStateOf(1f) }
     var rotation by remember { mutableStateOf(0f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
 
+    // Estado que escucha y acumula los cambios producidos por gestos.
     val state = rememberTransformableState { zoomChange, offsetChange, rotationChange ->
         scale *= zoomChange
         rotation += rotationChange
         offset += offsetChange
     }
 
-
-
     AsyncImage(
         model = url,
-        contentDescription = null,
+        contentDescription = "Imagen ampliada",
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1f)
-            // Aplicamos las transformaciones físicas
+            // Aplicación de transformaciones mediante la capa de gráficos.
             .graphicsLayer(
                 scaleX = maxOf(.5f, minOf(3f, scale)),
                 scaleY = maxOf(.5f, minOf(3f, scale)),
@@ -157,7 +169,7 @@ fun ZoomableImage(url: String) {
                 translationX = offset.x,
                 translationY = offset.y
             )
-            // Habilitamos la escucha de gestos múltiples
+            // Vinculación del detector de transformaciones al componente.
             .transformable(state = state)
     )
 }

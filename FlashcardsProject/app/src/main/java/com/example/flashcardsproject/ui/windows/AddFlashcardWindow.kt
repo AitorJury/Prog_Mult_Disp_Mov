@@ -29,22 +29,31 @@ import coil.compose.AsyncImage
 import com.example.flashcardsproject.data.Flashcard
 import com.example.flashcardsproject.data.FlashcardRepository
 
+/**
+ * Pantalla principal para la creación de tarjetas.
+ * Permite al usuario crear múltiples tarjetas (texto o imagen) en una lista temporal
+ * antes de guardarlas definitivamente en un album.
+ * @param navController Controlador de navegación para gestionar el flujo entre pantallas.
+ * @param albumId Identificador del album al que se añaden las tarjetas.
+ */
 @Composable
 fun AddFlashcardWindow(navController: NavHostController, albumId: Int) {
     val context = LocalContext.current
 
-    // Lista temporal de tarjetas (Borrador)
+    // Lista reactiva para almacenar el borrador de tarjetas antes del guardado.
     val tempCards = remember { mutableStateListOf<Flashcard>() }
 
-    // Estados para la tarjeta que se está escribiendo ahora
+    // Captura de datos para el anverso de la tarjeta actual.
     var frontText by remember { mutableStateOf("") }
     var frontUri by remember { mutableStateOf<Uri?>(null) }
     var isFrontImage by remember { mutableStateOf(false) }
 
+    // Captura de datos para el reverso de la tarjeta actual.
     var backText by remember { mutableStateOf("") }
     var backUri by remember { mutableStateOf<Uri?>(null) }
     var isBackImage by remember { mutableStateOf(false) }
 
+    // Lanzador para seleccionar medios y solicitar permisos persistentes de URI (Frontal).
     val frontLauncher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         uri?.let {
             context.contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -52,6 +61,7 @@ fun AddFlashcardWindow(navController: NavHostController, albumId: Int) {
         }
     }
 
+    // Lanzador para seleccionar medios y solicitar permisos persistentes de URI (Trasero).
     val backLauncher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         uri?.let {
             context.contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -59,6 +69,7 @@ fun AddFlashcardWindow(navController: NavHostController, albumId: Int) {
         }
     }
 
+    // Habilita el guardado si ambos lados tienen contenido según su modo.
     val canAddToQueue = (if (isFrontImage) frontUri != null else frontText.isNotBlank()) &&
             (if (isBackImage) backUri != null else backText.isNotBlank())
 
@@ -68,6 +79,7 @@ fun AddFlashcardWindow(navController: NavHostController, albumId: Int) {
     ) {
         Column(modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp)) {
 
+            // Cabecera con botón de retroceso.
             Row(modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp), verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = { navController.popBackStack() }) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
@@ -77,6 +89,7 @@ fun AddFlashcardWindow(navController: NavHostController, albumId: Int) {
 
             Column(modifier = Modifier.weight(1f).verticalScroll(rememberScrollState())) {
 
+                // Selector de contenido para la Cara A.
                 ContentSelector(
                     title = "Anverso (Cara A)",
                     isImage = isFrontImage,
@@ -89,6 +102,7 @@ fun AddFlashcardWindow(navController: NavHostController, albumId: Int) {
 
                 HorizontalDivider(modifier = Modifier.padding(vertical = 20.dp))
 
+                // Selector de contenido para la Cara B.
                 ContentSelector(
                     title = "Reverso (Cara B)",
                     isImage = isBackImage,
@@ -101,17 +115,18 @@ fun AddFlashcardWindow(navController: NavHostController, albumId: Int) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                // Mover los datos actuales a la cola temporal para guardado.
                 Button(
                     onClick = {
                         val newCard = Flashcard(
-                            id = 0,
+                            id = 0, // El ID real será generado por el repositorio.
                             frontContent = if (isFrontImage) frontUri.toString() else frontText,
                             isFrontImage = isFrontImage,
                             backContent = if (isBackImage) backUri.toString() else backText,
                             isBackImage = isBackImage
                         )
                         tempCards.add(newCard)
-                        // Limpiar para la siguiente
+                        // Reset de los campos para la siguiente entrada.
                         frontText = ""; frontUri = null; backText = ""; backUri = null
                     },
                     modifier = Modifier.fillMaxWidth(),
@@ -125,6 +140,7 @@ fun AddFlashcardWindow(navController: NavHostController, albumId: Int) {
 
                 Spacer(modifier = Modifier.height(24.dp))
 
+                // Visualización de la lista de borradores (LazyRow para mover de forma horizontal).
                 if (tempCards.isNotEmpty()) {
                     Text("Tarjetas listas para guardar (${tempCards.size}):", style = MaterialTheme.typography.labelLarge)
                     Spacer(modifier = Modifier.height(8.dp))
@@ -140,7 +156,7 @@ fun AddFlashcardWindow(navController: NavHostController, albumId: Int) {
                 }
             }
 
-            // BOTÓN FINAL USANDO LA NUEVA FUNCIÓN MASIVA
+            // Guardado en el repositorio.
             Button(
                 onClick = {
                     FlashcardRepository.addMultipleFlashcardsToAlbum(albumId, tempCards, context)
@@ -156,6 +172,11 @@ fun AddFlashcardWindow(navController: NavHostController, albumId: Int) {
     }
 }
 
+/**
+ * Representación visual miniaturizada de una tarjeta en la lista de borradores.
+ * @param card Datos de la tarjeta a previsualizar.
+ * @param onDelete Callback ejecutado al presionar el botón de eliminar.
+ */
 @Composable
 fun PreviewCardItem(card: Flashcard, onDelete: () -> Unit) {
     Box(
@@ -172,6 +193,7 @@ fun PreviewCardItem(card: Flashcard, onDelete: () -> Unit) {
                 Text(card.frontContent, maxLines = 2, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(4.dp))
             }
         }
+        // Botón para eliminar la tarjeta de la cola.
         IconButton(
             onClick = onDelete,
             modifier = Modifier.size(24.dp).align(Alignment.TopEnd).background(Color.Red.copy(alpha = 0.7f), RoundedCornerShape(bottomStart = 8.dp))
@@ -181,6 +203,16 @@ fun PreviewCardItem(card: Flashcard, onDelete: () -> Unit) {
     }
 }
 
+/**
+ * Componente de entrada de datos que permite cambiar entre modo texto y modo imagen.
+ * @param title Etiqueta del campo.
+ * @param isImage Estado que define si el modo actual es imagen.
+ * @param textValue Valor del campo de texto.
+ * @param imageUri URI de la imagen.
+ * @param onModeChange Notifica cambios entre los modos Texto/Imagen.
+ * @param onTextChange Notifica actualizaciones en el campo de texto.
+ * @param onPickImage Callback para disparar el selector de galería del sistema.
+ */
 @Composable
 fun ContentSelector(
     title: String,
@@ -194,6 +226,7 @@ fun ContentSelector(
     Column {
         Text(title, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
 
+        // Chips de selección de modo.
         Row(modifier = Modifier.padding(vertical = 12.dp)) {
             FilterChip(
                 selected = !isImage,
@@ -205,11 +238,12 @@ fun ContentSelector(
             FilterChip(
                 selected = isImage,
                 onClick = { onModeChange(true) },
-                label = { Text("Galería") },
+                label = { Text("Imagen") },
                 leadingIcon = { Icon(Icons.Default.Image, null, modifier = Modifier.size(18.dp)) }
             )
         }
 
+        // Área de entrada dinámica según el modo seleccionado.
         if (isImage) {
             Box(
                 modifier = Modifier
