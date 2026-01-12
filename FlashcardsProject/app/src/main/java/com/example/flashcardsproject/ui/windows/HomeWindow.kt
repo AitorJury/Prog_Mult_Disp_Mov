@@ -17,28 +17,24 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
 /**
- * Pantalla de inicio de la aplicación (Menú Principal).
- * Actúa como el centro de mando permitiendo el acceso a las funciones de consulta,
- * creación y visualización de información del proyecto.
- *
- * @param navController Controlador que gestiona el stack de navegación.
+ * Pantalla de inicio con corrección de márgenes para diseño Edge-to-Edge.
  */
 @Composable
 fun HomeWindow(navController: NavHostController) {
-    // Surface proporciona el lienzo de fondo respetando el color del tema
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        // Disposición vertical centrada para los elementos de marca y menú
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .statusBarsPadding() // EVITA QUE EL TÍTULO CHOQUE CON LA BARRA DE ESTADO
                 .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Título de la aplicación con tipografía de alto impacto
+            // Espaciador flexible para centrar el contenido verticalmente
+            Spacer(modifier = Modifier.weight(1f))
+
             Text(
                 text = "Gestor de\nFlashcards",
                 style = MaterialTheme.typography.displayLarge,
@@ -50,7 +46,6 @@ fun HomeWindow(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Subtítulo motivador con opacidad suave para contraste jerárquico
             Text(
                 text = "Organiza tu aprendizaje",
                 style = MaterialTheme.typography.bodyLarge,
@@ -59,10 +54,6 @@ fun HomeWindow(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(56.dp))
 
-            /**
-             * Contenedor de acciones principales.
-             * Se utiliza una tarjeta (Card) para agrupar visualmente los botones de navegación.
-             */
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(24.dp),
@@ -74,16 +65,12 @@ fun HomeWindow(navController: NavHostController) {
                     modifier = Modifier.padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Botón para acceder al listado de álbumes existentes
                     Button(
                         onClick = { navController.navigate("album_list") },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary
-                        )
+                        shape = RoundedCornerShape(16.dp)
                     ) {
                         Icon(Icons.Default.List, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
@@ -96,16 +83,12 @@ fun HomeWindow(navController: NavHostController) {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Botón para iniciar el flujo de creación de un nuevo álbum
                     Button(
                         onClick = { navController.navigate("create_album") },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary
-                        )
+                        shape = RoundedCornerShape(16.dp)
                     ) {
                         Icon(Icons.Default.Add, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
@@ -118,14 +101,12 @@ fun HomeWindow(navController: NavHostController) {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Botón de estilo 'Outlined' para la sección de créditos (menor importancia visual)
                     OutlinedButton(
                         onClick = { navController.navigate("info") },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        border = ButtonDefaults.outlinedButtonBorder.copy(width = 1.dp)
+                        shape = RoundedCornerShape(16.dp)
                     ) {
                         Icon(Icons.Default.Info, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
@@ -136,6 +117,9 @@ fun HomeWindow(navController: NavHostController) {
                     }
                 }
             }
+
+            // Espaciador flexible inferior para mantener el equilibrio visual
+            Spacer(modifier = Modifier.weight(1.2f))
         }
     }
 }

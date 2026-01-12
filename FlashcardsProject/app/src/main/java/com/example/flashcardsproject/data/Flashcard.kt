@@ -1,26 +1,21 @@
 package com.example.flashcardsproject.data
 
+import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
-import com.example.flashcardsproject.R
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 /**
- * Representa la unidad mínima de información del sistema.
- * @property id Identificador único de la tarjeta.
- * @property frontImage Recurso gráfico (ID de drawable) que se muestra en la cara frontal.
- * @property backText Texto descriptivo o solución que se muestra en la cara posterior.
+ * Modelo de datos para las tarjetas y los álbumes.
  */
 data class Flashcard(
     val id: Int,
-    val frontImage: Int,
-    val backText: String
+    val frontContent: String,
+    val isFrontImage: Boolean,
+    val backContent: String,
+    val isBackImage: Boolean
 )
 
-/**
- * Agrupación lógica de tarjetas de estudio.
- * @property id Identificador único del álbum.
- * @property name Título descriptivo del álbum.
- * @property cards Lista reactiva de tarjetas contenidas en el álbum.
- */
 data class Album(
     val id: Int,
     var name: String,
@@ -28,78 +23,82 @@ data class Album(
 )
 
 /**
- * Repositorio centralizado encargado de la gestión de persistencia en memoria.
- * Implementa el patrón Singleton para garantizar una única fuente de verdad de los datos.
+ * Repositorio centralizado con persistencia XML y lógica de guardado masivo.
  */
 object FlashcardRepository {
-    // Contador interno para garantizar la unicidad de los identificadores de los álbumes
+    private const val PREFS_NAME = "flashcards_prefs"
+    private const val KEY_ALBUMS = "albums_json"
+    private val gson = Gson()
+
+    val albums = mutableStateListOf<Album>()
     private var albumCounter = 1
 
-    /**
-     * Lista observable de álbumes. El uso de mutableStateListOf permite que
-     * Compose reaccione automáticamente a cambios en la lista (añadir/eliminar).
-     */
-    val albums = mutableStateListOf<Album>(
-        Album(
-            id = albumCounter++,
-            name = "Herramientas Taller",
-            cards = mutableStateListOf(
-                Flashcard(1, R.drawable.image1, "Llave Allen"),
-                Flashcard(2, R.drawable.image2, "Llave Estrellada"),
-                Flashcard(3, R.drawable.image3, "Llave de Tubo")
-            )
-        )
-    )
+    fun init(context: Context) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val json = prefs.getString(KEY_ALBUMS, null)
 
-    /**
-     * Registra un nuevo álbum en el sistema con una lista de tarjetas vacía.
-     * @param name Nombre que se asignará al nuevo álbum.
-     */
-    fun createAlbum(name: String) {
+        if (json != null) {
+            val type = object : TypeToken<List<Album>>() {}.type
+            val loadedAlbums: List<Album> = gson.fromJson(json, type)
+            albums.clear()
+            albums.addAll(loadedAlbums)
+            albumCounter = (albums.maxOfOrNull { it.id } ?: 0) + 1
+        }
+    }
+
+    private fun saveData(context: Context) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val json = gson.toJson(albums.toList())
+        prefs.edit().putString(KEY_ALBUMS, json).apply()
+    }
+
+    fun createAlbum(name: String, context: Context? = null) {
         albums.add(Album(id = albumCounter++, name = name))
+        context?.let { saveData(it) }
     }
 
-    /**
-     * Elimina un álbum del repositorio basándose en su identificador.
-     * @param id Identificador del álbum a eliminar.
-     */
-    fun deleteAlbum(id: Int) {
+    fun deleteAlbum(id: Int, context: Context) {
         albums.removeAll { it.id == id }
+        saveData(context)
     }
 
+    fun getAlbumById(id: Int): Album? = albums.find { it.id == id }
+
     /**
-     * Actualiza el nombre de un álbum existente y notifica el cambio al estado de la UI.
-     * @param id Identificador del álbum a modificar.
-     * @param newName Nuevo título para el álbum.
+     * Añade una sola tarjeta al álbum.
      */
-    fun updateAlbumName(id: Int, newName: String) {
-        getAlbumById(id)?.let { it.name = newName }
-        val index = albums.indexOfFirst { it.id == id }
-        if (index != -1) {
-            val updatedAlbum = albums[index]
-            albums[index] = updatedAlbum.copy(name = newName)
+    fun addFlashcardToAlbum(
+        albumId: Int,
+        front: String,
+        isFrontImg: Boolean,
+        back: String,
+        isBackImg: Boolean,
+        context: Context
+    ) {
+        val album = getAlbumById(albumId)
+        album?.let {
+            val newId = (it.cards.maxOfOrNull { c -> c.id } ?: 0) + 1
+            it.cards.add(Flashcard(newId, front, isFrontImg, back, isBackImg))
+            saveData(context)
         }
     }
 
     /**
-     * Busca y retorna un álbum específico.
-     * @param id Identificador del álbum.
-     * @return El objeto [Album] si se encuentra, de lo contrario retorna null.
+     * NUEVA FUNCIÓN: Añade una lista completa de tarjetas de una sola vez.
+     * Esto es mucho más rápido para la nueva ventana de "añadir varias".
      */
-    fun getAlbumById(id: Int): Album? {
-        return albums.find { it.id == id }
-    }
-
-    /**
-     * Inserta una nueva tarjeta dentro de un álbum específico.
-     * Calcula automáticamente el nuevo ID basándose en el ID más alto existente en el álbum.
-     * @param albumId ID del álbum donde se añadirá la tarjeta.
-     * @param frontImage Recurso de imagen seleccionado para el frontal.
-     * @param backText Texto explicativo para el reverso.
-     */
-    fun addFlashcardToAlbum(albumId: Int, frontImage: Int, backText: String) {
+    fun addMultipleFlashcardsToAlbum(
+        albumId: Int,
+        newCards: List<Flashcard>,
+        context: Context
+    ) {
         val album = getAlbumById(albumId)
-        val newId = (album?.cards?.maxOfOrNull { it.id } ?: 0) + 1
-        album?.cards?.add(Flashcard(newId, frontImage, backText))
+        album?.let { targetAlbum ->
+            newCards.forEach { card ->
+                val newId = (targetAlbum.cards.maxOfOrNull { c -> c.id } ?: 0) + 1
+                targetAlbum.cards.add(card.copy(id = newId))
+            }
+            saveData(context)
+        }
     }
 }
