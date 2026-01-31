@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -61,20 +62,39 @@ fun AlbumListWindow(navController: NavHostController) {
                 )
             }
 
-            // Lista de albumes.
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(AppSizes.screenPadding),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(albums) { album ->
-                    AlbumItem(
-                        album = album,
-                        onOpenStudy = { navController.navigate("list/${album.id}") },
-                        onOpenGallery = { navController.navigate("gallery/${album.id}") },
-                        onAddCard = { navController.navigate("add_card/${album.id}") },
-                        onDelete = { FlashcardRepository.deleteAlbum(album.id, context) }
-                    )
+            if (albums.isEmpty()) {
+                // Estado vacío.
+                Box(modifier = Modifier.fillMaxSize().padding(AppSizes.screenPadding), contentAlignment = Alignment.Center) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            "No tienes álbumes todavía",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(onClick = { navController.navigate("create_album") }) {
+                            Icon(Icons.Default.Add, null)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Crear mi primer álbum")
+                        }
+                    }
+                }
+            } else {
+                // Lista de albumes.
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(AppSizes.screenPadding),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(albums) { album ->
+                        AlbumItem(
+                            album = album,
+                            onOpenStudy = { navController.navigate("list/${album.id}") },
+                            onOpenGallery = { navController.navigate("gallery/${album.id}") },
+                            onAddCard = { navController.navigate("add_card/${album.id}") },
+                            onDelete = { FlashcardRepository.deleteAlbum(album.id, context) }
+                        )
+                    }
                 }
             }
         }

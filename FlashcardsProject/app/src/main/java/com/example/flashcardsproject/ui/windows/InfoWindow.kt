@@ -107,11 +107,11 @@ fun InfoWindow(navController: NavHostController) {
                 }
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(60.dp))
 
             // Identificador de versión.
             Text(
-                text = "Versión 1.0.0",
+                text = "Versión 1.7.3",
                 modifier = Modifier.fillMaxWidth(),
                 style = MaterialTheme.typography.labelSmall,
                 textAlign = TextAlign.Center,

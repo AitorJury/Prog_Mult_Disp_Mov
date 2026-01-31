@@ -74,29 +74,28 @@ fun AddFlashcardWindow(navController: NavHostController, albumId: Int) {
     val canAddToQueue = (if (isFrontImage) frontUri != null else frontText.isNotBlank()) &&
             (if (isBackImage) backUri != null else backText.isNotBlank())
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        // Usamos Scaffold para separar la lista de botones fijos del contenido con scroll
-        Scaffold(
-            bottomBar = {
-                Button(
-                    onClick = {
-                        FlashcardRepository.addMultipleFlashcardsToAlbum(albumId, tempCards, context)
-                        navController.popBackStack()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(AppSizes.screenPadding)
-                        .height(56.dp),
-                    enabled = tempCards.isNotEmpty(),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Text("Guardar todas (${tempCards.size})", fontWeight = FontWeight.Bold)
+    Scaffold(
+        bottomBar = {
+            // El botón de guardado final siempre estará visible abajo sin tapar el título
+            if (tempCards.isNotEmpty()) {
+                Surface(tonalElevation = 3.dp) {
+                    Button(
+                        onClick = {
+                            FlashcardRepository.addMultipleFlashcardsToAlbum(albumId, tempCards, context)
+                            navController.popBackStack()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(AppSizes.screenPadding)
+                            .height(56.dp),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Text("Guardar todas (${tempCards.size})", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    }
                 }
             }
-        ) { innerPadding ->
+        }
+    ) { innerPadding ->
         Column(modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)
@@ -178,21 +177,7 @@ fun AddFlashcardWindow(navController: NavHostController, albumId: Int) {
                         }
                     }
                 }
-            Spacer(modifier = Modifier.height(100.dp))
-            }
-
-            // Guardado en el repositorio.
-            Button(
-                onClick = {
-                    FlashcardRepository.addMultipleFlashcardsToAlbum(albumId, tempCards, context)
-                    navController.popBackStack()
-                },
-                modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp).height(56.dp),
-                enabled = tempCards.isNotEmpty(),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Text("Guardar todas (${tempCards.size})", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-            }
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
