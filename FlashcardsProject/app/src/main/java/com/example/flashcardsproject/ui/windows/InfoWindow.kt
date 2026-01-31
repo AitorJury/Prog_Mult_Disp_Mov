@@ -2,7 +2,9 @@ package com.example.flashcardsproject.ui.windows
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
@@ -14,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.flashcardsproject.ui.theme.AppSizes
 
 /**
  * Pantalla de información técnica, descripción del proyecto y créditos.
@@ -29,11 +32,13 @@ fun InfoWindow(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxSize()
                 // Márgenes superiores para evitar la superposición.
-                .statusBarsPadding()
-                .padding(24.dp)
+                .verticalScroll(rememberScrollState())
+                .padding(AppSizes.screenPadding)
         ) {
             // Botón de navegación hacia atrás.
-            IconButton(onClick = { navController.popBackStack() }) {
+            IconButton(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier.offset(x = (-12).dp)) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Volver",
@@ -41,15 +46,14 @@ fun InfoWindow(navController: NavHostController) {
                 )
             }
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             // Título de la aplicación.
             Text(
                 text = "Proyecto\nFlashcards",
-                style = MaterialTheme.typography.displayMedium,
+                style = MaterialTheme.typography.titleLarge.copy(fontSize = 32.sp),
                 fontWeight = FontWeight.Bold,
-                lineHeight = 45.sp,
-                color = MaterialTheme.colorScheme.onBackground
+                lineHeight = 38.sp,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -65,7 +69,7 @@ fun InfoWindow(navController: NavHostController) {
                     )
             )
 
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(40.dp))
 
             // Tarjeta de presentación de autoría y misión del proyecto.
             Card(
@@ -73,7 +77,7 @@ fun InfoWindow(navController: NavHostController) {
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                 ),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(24.dp)
             ) {
                 Column(
                     modifier = Modifier.padding(24.dp),
@@ -87,19 +91,17 @@ fun InfoWindow(navController: NavHostController) {
 
                     Text(
                         text = "Aitor Jury Rodríguez",
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Medium,
+                        style = MaterialTheme.typography.titleLarge,
                         textAlign = TextAlign.Center
                     )
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     // Resumen del propósito de la aplicación.
                     Text(
                         text = "Una herramienta educativa diseñada para aprender teoría mediante memoria visual.",
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center,
-                        lineHeight = 20.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -113,11 +115,8 @@ fun InfoWindow(navController: NavHostController) {
                 modifier = Modifier.fillMaxWidth(),
                 style = MaterialTheme.typography.labelSmall,
                 textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
             )
-
-            // Margen inferior.
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

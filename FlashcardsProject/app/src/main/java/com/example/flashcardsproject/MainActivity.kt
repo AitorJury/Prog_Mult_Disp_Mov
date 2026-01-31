@@ -9,6 +9,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -26,7 +27,6 @@ import com.example.flashcardsproject.ui.theme.FlashcardsProjectTheme
 class MainActivity : ComponentActivity() {
 
     // Configuración inicial al crear la actividad.
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         // Implementación de la pantalla de carga.
         installSplashScreen()
@@ -42,7 +42,10 @@ class MainActivity : ComponentActivity() {
             FlashcardsProjectTheme {
                 // Contenedor base de la aplicación.
                 Scaffold(modifier = Modifier.fillMaxSize()) {
-                    MainNavigation()
+                        innerPadding ->
+                    // Pasamos el padding a la navegación para que todas las
+                    // ventanas respeten los márgenes del sistema (notch, barras, etc.)
+                    MainNavigation(innerPadding)
                 }
             }
         }
@@ -54,12 +57,13 @@ class MainActivity : ComponentActivity() {
  * Define todas las rutas, los argumentos necesarios y las transiciones.
  */
 @Composable
-fun MainNavigation() {
+fun MainNavigation(contentPadding: androidx.compose.foundation.layout.PaddingValues) {
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
         startDestination = "init",
+        modifier = Modifier.padding(contentPadding),
         // Definición de transiciones.
         enterTransition = { fadeIn(animationSpec = tween(400)) + slideInHorizontally() },
         exitTransition = { fadeOut(animationSpec = tween(400)) + slideOutHorizontally() }

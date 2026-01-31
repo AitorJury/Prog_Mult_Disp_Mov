@@ -5,6 +5,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 
 /**
  * Esquema de colores para el Modo Oscuro.
@@ -89,4 +90,9 @@ fun FlashcardsProjectTheme(
         typography = Typography,
         content = content
     )
+}
+
+object AppSizes {
+    val screenPadding = 16.dp
+    // Usaremos 16.dp o 20.dp para un look moderno
 }

@@ -1,7 +1,9 @@
 package com.example.flashcardsproject.ui.windows
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
@@ -12,8 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.flashcardsproject.data.FlashcardRepository
+import com.example.flashcardsproject.ui.theme.AppSizes
 
 /**
  * Pantalla de creación de nuevos albumes.
@@ -37,23 +41,27 @@ fun CreateAlbumWindow(navController: NavHostController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(24.dp)
+                .verticalScroll(rememberScrollState())
+                .padding(AppSizes.screenPadding)
         ) {
             // Acción de navegación hacia atrás.
-            IconButton(onClick = { navController.popBackStack() }) {
+            IconButton(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier.offset(x = (-12).dp)
+                ) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Volver",
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Cabecera.
             Text(
                 text = "Nuevo Album",
-                style = MaterialTheme.typography.displaySmall,
+                style = MaterialTheme.typography.titleLarge.copy(fontSize = 28.sp),
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -64,21 +72,17 @@ fun CreateAlbumWindow(navController: NavHostController) {
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
             )
 
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(40.dp))
 
             // Campo de entrada de texto principal.
             OutlinedTextField(
                 value = albumName,
                 onValueChange = { albumName = it },
                 label = { Text("Nombre del album") },
-                placeholder = { Text("Ej: Herramientas de Carpintería") },
+                placeholder = { Text("Ej: Vocabulario Inglés") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                shape = RoundedCornerShape(16.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
-                )
+                shape = RoundedCornerShape(16.dp)
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -100,7 +104,6 @@ fun CreateAlbumWindow(navController: NavHostController) {
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "Guardar Album",
-                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
             }

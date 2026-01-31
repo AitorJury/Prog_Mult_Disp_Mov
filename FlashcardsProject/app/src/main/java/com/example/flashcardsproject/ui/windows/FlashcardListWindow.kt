@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -21,6 +22,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.flashcardsproject.data.Flashcard
 import com.example.flashcardsproject.data.FlashcardRepository
+import com.example.flashcardsproject.ui.theme.AppSizes
 
 /**
  * Pantalla de visualización y estudio de tarjetas para un album específico.
@@ -35,8 +37,7 @@ fun FlashcardListWindow(navController: NavHostController, albumId: Int) {
 
     Surface(
         modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding(),
+            .fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -45,39 +46,39 @@ fun FlashcardListWindow(navController: NavHostController, albumId: Int) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(horizontal = AppSizes.screenPadding)
+                    .padding(top = AppSizes.screenPadding, bottom = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { navController.popBackStack() }) {
+                IconButton(
+                    onClick = { navController.popBackStack() },
+                    modifier = Modifier.offset(x = (-12).dp)) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Volver",
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
-                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = album?.name ?: "Album no encontrado",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
                 )
             }
 
             // Si no hay tarjetas, notifica al usuario.
             if (album == null || album.cards.isEmpty()) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Box(modifier = Modifier.fillMaxSize().padding(AppSizes.screenPadding), contentAlignment = Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             text = "Este album está vacío.",
                             textAlign = TextAlign.Center,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                         )
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Button(onClick = { navController.navigate("add_card/$albumId") }) {
-                            Icon(Icons.Default.Add, contentDescription = null)
+                            Icon(Icons.Default.Add, null)
                             Spacer(modifier = Modifier.width(8.dp))
                             Text("Añadir mi primera tarjeta")
                         }
@@ -87,7 +88,7 @@ fun FlashcardListWindow(navController: NavHostController, albumId: Int) {
                 // Lista de las tarjetas existentes en el album.
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
+                    contentPadding = PaddingValues(AppSizes.screenPadding),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     items(album.cards) { flashcard ->
@@ -100,16 +101,15 @@ fun FlashcardListWindow(navController: NavHostController, albumId: Int) {
                             onClick = { navController.navigate("add_card/$albumId") },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 16.dp),
-                            shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+                                .padding(vertical = 16.dp)
+                                .height(56.dp),
+                            shape = RoundedCornerShape(12.dp)
                         ) {
-                            Icon(Icons.Default.Add, contentDescription = null)
+                            Icon(Icons.Default.Add, null)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Añadir más tarjetas a este álbum")
+                            Text("Añadir más tarjetas", style = MaterialTheme.typography.labelLarge)
                         }
                     }
-
-                    item { Spacer(modifier = Modifier.height(32.dp)) }
                 }
             }
         }
@@ -128,25 +128,19 @@ fun FlashcardItem(flashcard: Flashcard) {
     // Animación para el ángulo de rotación.
     val rotation by animateFloatAsState(
         targetValue = if (isFlipped) 180f else 0f,
-        animationSpec = tween(durationMillis = 600)
+        animationSpec = tween(600)
     )
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(280.dp)
+            .height(240.dp)
             .clickable { isFlipped = !isFlipped } // Alternar estado al hacer clic.
             .graphicsLayer {
                 rotationY = rotation // Aplica el giro en el eje vertical.
                 cameraDistance = 12f * density // Define la perspectiva para un efecto 3D realista.
             },
-        colors = CardDefaults.cardColors(
-            containerColor = if (rotation > 90f)
-                MaterialTheme.colorScheme.surfaceVariant
-            else
-                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Box(
             contentAlignment = Alignment.Center,

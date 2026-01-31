@@ -1,7 +1,9 @@
 package com.example.flashcardsproject.ui.windows
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
@@ -15,6 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.flashcardsproject.ui.theme.AppSizes
 
 /**
  * Pantalla de menú principal de la aplicación.
@@ -31,19 +34,19 @@ fun HomeWindow(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxSize()
                 // Inserción de márgenes para la barra de estado.
-                .statusBarsPadding()
-                .padding(24.dp),
+                .verticalScroll(rememberScrollState())
+                .padding(AppSizes.screenPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Espaciador superiorpara el título.
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(60.dp))
 
             // Título principal de la aplicación.
             Text(
                 text = "Gestor de\nFlashcards",
-                style = MaterialTheme.typography.displayLarge,
+                style = MaterialTheme.typography.titleLarge.copy(fontSize = 32.sp),
                 fontWeight = FontWeight.Black,
-                lineHeight = 56.sp,
+                lineHeight = 38.sp,
                 color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center
             )
@@ -68,67 +71,43 @@ fun HomeWindow(navController: NavHostController) {
                 )
             ) {
                 Column(
-                    modifier = Modifier.padding(24.dp),
+                    modifier = Modifier.padding(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Navegación a la lista de albumes.
-                    Button(
-                        onClick = { navController.navigate("album_list") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(16.dp)
-                    ) {
-                        Icon(Icons.Default.List, contentDescription = null)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Revisar Albumes",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
+                    HomeButton("Revisar Álbumes", Icons.Default.List) {
+                        navController.navigate("album_list")
                     }
-
                     Spacer(modifier = Modifier.height(16.dp))
-
-                    // Acceso a la creación de un nuevo album.
-                    Button(
-                        onClick = { navController.navigate("create_album") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(16.dp)
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = null)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Crear Nuevo Album",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
+                    HomeButton("Crear Nuevo Álbum", Icons.Default.Add) {
+                        navController.navigate("create_album")
                     }
-
                     Spacer(modifier = Modifier.height(16.dp))
-
-                    // Información sobre la aplicación y autoría.
                     OutlinedButton(
                         onClick = { navController.navigate("info") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
                         shape = RoundedCornerShape(16.dp)
                     ) {
                         Icon(Icons.Default.Info, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Créditos",
-                            style = MaterialTheme.typography.titleMedium
-                        )
+                        Text(text = "Créditos", style = MaterialTheme.typography.labelLarge)
                     }
                 }
             }
-
             // Espaciador inferior.
-            Spacer(modifier = Modifier.weight(1.2f))
+            Spacer(modifier = Modifier.height(40.dp))
         }
+    }
+}
+
+@Composable
+fun HomeButton(text: String, icon: androidx.compose.ui.graphics.vector.ImageVector, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth().height(56.dp),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Icon(icon, contentDescription = null)
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = text, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
     }
 }

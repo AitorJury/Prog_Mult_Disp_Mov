@@ -26,6 +26,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.flashcardsproject.data.FlashcardRepository
+import com.example.flashcardsproject.ui.theme.AppSizes
 
 /**
  * Pantalla de Galería de Imágenes.
@@ -59,20 +60,22 @@ fun GalleryViewWindow(navController: NavHostController, albumId: Int) {
         color = MaterialTheme.colorScheme.background
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-
             // Cabecera.
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .statusBarsPadding()
-                    .padding(16.dp),
+                    .padding(horizontal = AppSizes.screenPadding)
+                    .padding(top = AppSizes.screenPadding, bottom = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { navController.popBackStack() }) {
+                IconButton(
+                    onClick = { navController.popBackStack() },
+                    modifier = Modifier.offset(x = (-12).dp)
+                ) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
                 }
                 Text(
-                    text = "Imágenes de ${album?.name}",
+                    text = "Galería: ${album?.name}",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -80,19 +83,19 @@ fun GalleryViewWindow(navController: NavHostController, albumId: Int) {
 
             // Cuadrícula de imágenes. Utiliza 4 columnas fijas.
             LazyVerticalGrid(
-                columns = GridCells.Fixed(4),
-                contentPadding = PaddingValues(8.dp),
+                columns = GridCells.Adaptive(minSize = 90.dp),
+                contentPadding = PaddingValues(AppSizes.screenPadding),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(images) { imageUrl ->
                     AsyncImage(
                         model = imageUrl,
-                        contentDescription = "Miniatura de galería",
+                        contentDescription = "Miniatura",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .aspectRatio(1f)
-                            .clip(RoundedCornerShape(8.dp))
+                            .clip(RoundedCornerShape(12.dp))
                             .clickable { selectedImageUrl = imageUrl }
                     )
                 }

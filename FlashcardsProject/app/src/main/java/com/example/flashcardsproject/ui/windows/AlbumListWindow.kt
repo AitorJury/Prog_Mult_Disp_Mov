@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.flashcardsproject.data.Album
 import com.example.flashcardsproject.data.FlashcardRepository
+import com.example.flashcardsproject.ui.theme.AppSizes
 
 /**
  * Pantalla principal de gestión de albumes.
@@ -39,11 +40,14 @@ fun AlbumListWindow(navController: NavHostController) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .statusBarsPadding()
-                    .padding(16.dp),
+                    .padding(horizontal = AppSizes.screenPadding)
+                    .padding(top = AppSizes.screenPadding, bottom = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { navController.popBackStack() }) {
+                IconButton(
+                    onClick = { navController.popBackStack() },
+                    modifier = Modifier.offset(x = (-12).dp)
+                ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Volver",
@@ -52,14 +56,15 @@ fun AlbumListWindow(navController: NavHostController) {
                 }
                 Text(
                     text = "Mis Albumes",
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
             }
 
             // Lista de albumes.
             LazyColumn(
-                contentPadding = PaddingValues(16.dp),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(AppSizes.screenPadding),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(albums) { album ->

@@ -28,6 +28,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.flashcardsproject.data.Flashcard
 import com.example.flashcardsproject.data.FlashcardRepository
+import com.example.flashcardsproject.ui.theme.AppSizes
 
 /**
  * Pantalla principal para la creación de tarjetas.
@@ -74,20 +75,44 @@ fun AddFlashcardWindow(navController: NavHostController, albumId: Int) {
             (if (isBackImage) backUri != null else backText.isNotBlank())
 
     Surface(
-        modifier = Modifier.fillMaxSize().statusBarsPadding(),
+        modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        Column(modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp)) {
+        // Usamos Scaffold para separar la lista de botones fijos del contenido con scroll
+        Scaffold(
+            bottomBar = {
+                Button(
+                    onClick = {
+                        FlashcardRepository.addMultipleFlashcardsToAlbum(albumId, tempCards, context)
+                        navController.popBackStack()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(AppSizes.screenPadding)
+                        .height(56.dp),
+                    enabled = tempCards.isNotEmpty(),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Text("Guardar todas (${tempCards.size})", fontWeight = FontWeight.Bold)
+                }
+            }
+        ) { innerPadding ->
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = AppSizes.screenPadding)
+        ) {
 
             // Cabecera con botón de retroceso.
             Row(modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp), verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = { navController.popBackStack() }) {
+                IconButton(
+                    onClick = { navController.popBackStack() },
+                    modifier = Modifier.offset(x = (-12).dp)) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
                 }
                 Text("Añadir Varias Tarjetas", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             }
-
-            Column(modifier = Modifier.weight(1f).verticalScroll(rememberScrollState())) {
 
                 // Selector de contenido para la Cara A.
                 ContentSelector(
@@ -113,7 +138,7 @@ fun AddFlashcardWindow(navController: NavHostController, albumId: Int) {
                     onPickImage = { backLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
                 // Mover los datos actuales a la cola temporal para guardado.
                 Button(
@@ -129,31 +154,31 @@ fun AddFlashcardWindow(navController: NavHostController, albumId: Int) {
                         // Reset de los campos para la siguiente entrada.
                         frontText = ""; frontUri = null; backText = ""; backUri = null
                     },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
                     enabled = canAddToQueue,
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
                     Icon(Icons.Default.Add, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Añadir a la lista temporal")
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
-
                 // Visualización de la lista de borradores (LazyRow para mover de forma horizontal).
                 if (tempCards.isNotEmpty()) {
-                    Text("Tarjetas listas para guardar (${tempCards.size}):", style = MaterialTheme.typography.labelLarge)
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Text("Borradores:", style = MaterialTheme.typography.labelLarge)
 
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        contentPadding = PaddingValues(bottom = 16.dp)
+                        contentPadding = PaddingValues(vertical = 8.dp)
                     ) {
                         itemsIndexed(tempCards) { index, card ->
                             PreviewCardItem(card = card, onDelete = { tempCards.removeAt(index) })
                         }
                     }
                 }
+            Spacer(modifier = Modifier.height(100.dp))
             }
 
             // Guardado en el repositorio.
