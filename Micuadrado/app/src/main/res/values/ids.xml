@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="cuadrado" type="id" />
+    <item name="buttonArriba" type="id" />
+    <item name="buttonAbajo" type="id" />
+    <item name="buttonIzquierda" type="id" />
+    <item name="buttonDerecha" type="id" />
+    <item name="buttonCambiarTamanio" type="id" />
+</resources>
